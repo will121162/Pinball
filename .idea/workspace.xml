@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7fe0e7fd-4372-4ef9-b721-a8dece0d602e" name="Changes" comment="still just working things out, not intended to work yet.&#10;will add readme and notes in future revision&#10;key consepts added;&#10;a queue to hold data in FIFO system, means data can collect faster than it can be sent off to SQL&#10;&#10;classes used to maintain consistant structure through  out.">
+    <list default="true" id="7fe0e7fd-4372-4ef9-b721-a8dece0d602e" name="Changes" comment="got the intended structure down with comments defining the next steps.&#10;&#10;will make func. send_uart write to SQL using the the other functions">
       <change afterPath="$PROJECT_DIR$/runtime.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/somewhat_psudo_runtime.py" beforeDir="false" />
@@ -109,6 +109,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="this is a practice scope out of a larger project where I am designing a pinball machine from scratch using digital technology such as arduinos, esps and transistors.&#10;to maintain good principles this project will focus on classes, initally scoped out and defined in python with the aim to translate that into cpp for the microcontrollers later." />
     <MESSAGE value="still just working things out, not intended to work yet.&#10;will add readme and notes in future revision&#10;key consepts added;&#10;a queue to hold data in FIFO system, means data can collect faster than it can be sent off to SQL&#10;&#10;classes used to maintain consistant structure through  out." />
-    <option name="LAST_COMMIT_MESSAGE" value="still just working things out, not intended to work yet.&#10;will add readme and notes in future revision&#10;key consepts added;&#10;a queue to hold data in FIFO system, means data can collect faster than it can be sent off to SQL&#10;&#10;classes used to maintain consistant structure through  out." />
+    <MESSAGE value="got the intended structure down with comments defining the next steps.&#10;&#10;will make func. send_uart write to SQL using the the other functions" />
+    <option name="LAST_COMMIT_MESSAGE" value="got the intended structure down with comments defining the next steps.&#10;&#10;will make func. send_uart write to SQL using the the other functions" />
   </component>
 </project>
