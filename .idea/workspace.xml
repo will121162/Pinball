@@ -4,12 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7fe0e7fd-4372-4ef9-b721-a8dece0d602e" name="Changes" comment="this is a practice scope out of a larger project where I am designing a pinball machine from scratch using digital technology such as arduinos, esps and transistors.&#10;to maintain good principles this project will focus on classes, initally scoped out and defined in python with the aim to translate that into cpp for the microcontrollers later.">
-      <change afterPath="$PROJECT_DIR$/SQL_functions.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/somewhat_psudo_runtime.py" afterDir="false" />
+    <list default="true" id="7fe0e7fd-4372-4ef9-b721-a8dece0d602e" name="Changes" comment="still just working things out, not intended to work yet.&#10;will add readme and notes in future revision&#10;key consepts added;&#10;a queue to hold data in FIFO system, means data can collect faster than it can be sent off to SQL&#10;&#10;classes used to maintain consistant structure through  out.">
+      <change afterPath="$PROJECT_DIR$/runtime.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/class_pracatce.py" beforeDir="false" afterPath="$PROJECT_DIR$/class_pracatce.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/somewhat_psudo_runtime.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,22 +36,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Volumes/Data Set 1/software projects test/pin_ball/.venv&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "/Volumes/Data Set 1/software projects test/pin_ball/.venv",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/.venv" />
@@ -82,7 +81,15 @@
       <option name="project" value="LOCAL" />
       <updated>1794572886398</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="still just working things out, not intended to work yet.&#10;will add readme and notes in future revision&#10;key consepts added;&#10;a queue to hold data in FIFO system, means data can collect faster than it can be sent off to SQL&#10;&#10;classes used to maintain consistant structure through  out.">
+      <option name="closed" value="true" />
+      <created>1794586355544</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1794586355544</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -101,6 +108,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="this is a practice scope out of a larger project where I am designing a pinball machine from scratch using digital technology such as arduinos, esps and transistors.&#10;to maintain good principles this project will focus on classes, initally scoped out and defined in python with the aim to translate that into cpp for the microcontrollers later." />
-    <option name="LAST_COMMIT_MESSAGE" value="this is a practice scope out of a larger project where I am designing a pinball machine from scratch using digital technology such as arduinos, esps and transistors.&#10;to maintain good principles this project will focus on classes, initally scoped out and defined in python with the aim to translate that into cpp for the microcontrollers later." />
+    <MESSAGE value="still just working things out, not intended to work yet.&#10;will add readme and notes in future revision&#10;key consepts added;&#10;a queue to hold data in FIFO system, means data can collect faster than it can be sent off to SQL&#10;&#10;classes used to maintain consistant structure through  out." />
+    <option name="LAST_COMMIT_MESSAGE" value="still just working things out, not intended to work yet.&#10;will add readme and notes in future revision&#10;key consepts added;&#10;a queue to hold data in FIFO system, means data can collect faster than it can be sent off to SQL&#10;&#10;classes used to maintain consistant structure through  out." />
   </component>
 </project>
