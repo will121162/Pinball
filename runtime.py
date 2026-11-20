@@ -1,7 +1,6 @@
-#I've not shared the readme yet - will write soon
-#this is a loose structure and not intended to work
+
 #key concepts are; there's a queue to hold data once it has been flagged as changed from initial state.
-#then the uart sender function takes the oldest item in the queue and sends it off
+#then the uart sender function takes the oldest item in the queue and sends it to the SQL server to save the game meta data
 from random import randint
 from SQL_functions import SQL_insert
 import mysql.connector
@@ -16,26 +15,18 @@ database = os.environ['DB']
 db = mysql.connector.connect(
     host=os.environ['HOST'],
     port=os.environ['PORT'],
-    user=os.environ['SQL_USR_NAME'],
-    password=os.environ["SQL_PW"],
+    user=os.environ['pinball_sqlun'],
+    password=os.environ["pinball_sqlpw"],
     database=database,
 )
 mycursor = db.cursor()
 
-rows =[]
-columns =[]
-db_dict = {
-    'db':db,
-    'columns':columns,
-    'rows':rows,
-}
-
 class Queue:
-    def __init__(self,stack:list):
+    def __init__(self,stack):
         self.stack = stack
 
-    def tail(self): #for practice, pop does it smoother
-        tail = self.stack[0]
+    def tail(self)-> dict: #for practice, pop does it smoother
+        tail:dict = self.stack[0]
         self.stack.remove(tail)
         return tail
 
@@ -44,14 +35,15 @@ class Queue:
 
     def subtract (self):
         return self.stack.pop(0)
+
 queue = Queue(stack=[])
 
 class Pin:
-    def __init__(self,num: int, state: bool, points: int, time):
-        self.num = num
-        self.state = state
-        self.points = points
-        self.time = time
+    def __init__(self, num: int, state: bool, points: int | None, time):
+        self.num = num #pin number on MC
+        self.state = state # digital high or low
+        self.points = points # number of points assigned to the pin (high scoring hard to get pins vs low scoring easy pins)
+        self.time = time # date time of activation
 
 mario = Pin(state=False, points=0, num=1, time = None)
 peach = Pin(state=False, points=0, num=2,time = None)
@@ -61,25 +53,33 @@ toad = Pin(state=False, points=0, num=5,time = None)
 toadette = Pin(state=False, points=0, num=6,time = None)
 yoshi = Pin(state=False, points=0, num=7,time = None)
 wario = Pin(state=False, points=0, num=8,time = None)
-pins = [mario, peach, luigi, bowser, toad, toadette, yoshi, wario]
 
-print(mario.state == False)
-def send_uart(metrics_dict):
-    print(f'data from pin {metrics_dict} sent via uart')
-    SQL_insert(db_dict['rows'],db_dict['db'], db_dict['columns'])
-    #SQL_insert()
-    #SQL table set up with time of upload for instances, this would not be sufficient for final implementation as for game accurate event recording momentary detection is required
+flipper_l = Pin(state=False,points=None,num=40, time=None) #its a flipper, no points
+flipper_r = Pin(state=False,points=None,num=50, time=None) #its a flipper, no points
 
-for i in range(1000): #this is just a limited iterative loop to allow for cycling simulating the void loop in cpp
-    #within the next update I shall add random flips to the pin.state values as to replicate a digital high signal in the MC
+pins = [mario, peach, luigi, bowser, toad, toadette, yoshi, wario, flipper_l, flipper_r] #flippers included to confirm activation via state check
+
+game_username = 'test_user'
+
+rows = []
+columns = f'pin_id , event_time'
+db_dict = {
+    'db':db,
+    'columns':columns,
+    'rows':rows,
+}
+
+
+def send_uart(output_dict, database_method):
+    SQL_insert(rows=output_dict['row'],columns=output_dict['columns'],database=database_method)
+'''
+def initialise_sql(): # left for another day
+    SQL_insert(rows=game_username, columns='player_name',database=None)
+'''
+loop_unit = 100
+for i in range(loop_unit): #this is just a limited iterative loop to allow for cycling simulating the void loop in cpp
     counter = 0
     for pin in pins:
-        metrics_dict = {
-            'pin_num':pin.num,
-            'pin_state':pin.state,
-            'pin_points':pin.points,
-            'pin_time':pin.time
-        }
         if len(queue.stack) > 100: #not needed for python, needed for cpp MC integration, although it does catch possible queue pop failures
             raise Exception('runtime_stack exceeded 100 units')
 
@@ -88,21 +88,20 @@ for i in range(1000): #this is just a limited iterative loop to allow for cyclin
             pin.state = True
 
         if pin.state is True: #could simplify, left for clarity pin.state = true indicates a digital input on the pin thats defined
-            pin.points += 1
-            pin.time = datetime.datetime.now()
-            pin.state = False
-            metrics_dict['pin_points'] = pin.points #pin.points represents number of digital signals received from that node.
-            metrics_dict['pin_time'] = pin.time
-            metrics_dict['pin_num'] = pin.num
+            pin.time = datetime.time()
+
+            metrics_dict = {
+                'row':[pin.num,pin.time],
+                'columns':f'pin_id , event_time'
+            }
             queue.add(metrics_dict)#pin metrics are mutatable, need to take stamp of present values and append that, ie dict
-
-        if len(queue.stack) > 10:
+            pin.state = False
+        if len(queue.stack) > 0:
             for item in range(len(queue.stack)):
-                send_uart(queue.subtract())
-                counter += 1
-                print(f'{counter}')
+                send_uart(queue.tail(),db)
 
-    if i == 999: #pulls closing statistics to validate the loop works as expected
+
+    if i == loop_unit-1: #pulls closing statistics to validate the loop works as expected. loop_unit-1 allows me to change loop frequency without changing the ith number
         for pin in pins:
             print(f'pin {pin.num} points;{pin.points}\n')
         print(f'queue length:{len(queue.stack)}')

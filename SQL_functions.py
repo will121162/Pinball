@@ -9,8 +9,8 @@ database = os.environ['DB']
 db = mysql.connector.connect(
     host=os.environ['HOST'],
     port=os.environ['PORT'],
-    user=os.environ['SQL_USR_NAME'],
-    password=os.environ["SQL_PW"],
+    user=os.environ['pinball_sqlun'],
+    password=os.environ["pinball_sqlpw"],
     database=database,
 )
 mycursor = db.cursor()
@@ -34,3 +34,12 @@ def SQL_insert(rows,database,columns)->None:
 
         )
     db.commit()
+'''
+my_cursor.executemany(
+'insert into users (first_name, age, country_code, last_name, email, unique_str, is_admin) '
+    'values (%s,%s,%s,%s,%s,%s,%s)',
+    rows,
+
+    )
+db.commit()
+'''
