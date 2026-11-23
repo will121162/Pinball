@@ -54,8 +54,8 @@ toadette = Pin(state=False, points=0, num=6,time = None)
 yoshi = Pin(state=False, points=0, num=7,time = None)
 wario = Pin(state=False, points=0, num=8,time = None)
 
-flipper_l = Pin(state=False,points=None,num=40, time=None) #its a flipper, no points
-flipper_r = Pin(state=False,points=None,num=50, time=None) #its a flipper, no points
+flipper_l = Pin(state=False,points=None,num=40, time=None) #it's a flipper, no points, events needed for logs
+flipper_r = Pin(state=False,points=None,num=50, time=None) #it's a flipper, no points, events needed for logs
 
 pins = [mario, peach, luigi, bowser, toad, toadette, yoshi, wario, flipper_l, flipper_r] #flippers included to confirm activation via state check
 
@@ -70,15 +70,18 @@ db_dict = {
 }
 
 
-def send_uart(output_dict, database_method):
-    SQL_insert(rows=output_dict['row'],columns=output_dict['columns'],database=database_method)
-'''
-def initialise_sql(): # left for another day
-    SQL_insert(rows=game_username, columns='player_name',database=None)
-'''
+def send_uart(rows, columns, database):
+    SQL_insert(rows=rows,columns=columns,database=database)
+
+def initialise_sql(game_username):
+    SQL_insert(rows=game_username, columns='player_name',database='sessions')
+
 loop_unit = 100
+
+initialise_sql(game_username) # need to add ability to return session_id to then upload per row to SQL, session_id is saved per void loop (session)
+
 for i in range(loop_unit): #this is just a limited iterative loop to allow for cycling simulating the void loop in cpp
-    counter = 0
+    loop_time = datetime.time()
     for pin in pins:
         if len(queue.stack) > 100: #not needed for python, needed for cpp MC integration, although it does catch possible queue pop failures
             raise Exception('runtime_stack exceeded 100 units')
@@ -88,17 +91,19 @@ for i in range(loop_unit): #this is just a limited iterative loop to allow for c
             pin.state = True
 
         if pin.state is True: #could simplify, left for clarity pin.state = true indicates a digital input on the pin thats defined
-            pin.time = datetime.time()
-
+            pin.time = loop_time
             metrics_dict = {
                 'row':[pin.num,pin.time],
-                'columns':f'pin_id , event_time'
+                'columns':['pin_id, event_time']
             }
             queue.add(metrics_dict)#pin metrics are mutatable, need to take stamp of present values and append that, ie dict
             pin.state = False
         if len(queue.stack) > 0:
             for item in range(len(queue.stack)):
-                send_uart(queue.tail(),db)
+                queue_data = queue.tail() #calls tail once and allows for multiple dict extracts
+                row = queue_data['row']
+                columns = queue_data['columns']
+                send_uart(rows=row,columns=columns,database='events') #issue where the SQL method does not want to accept dict items, need to convert the data into either a list or tuple
 
 
     if i == loop_unit-1: #pulls closing statistics to validate the loop works as expected. loop_unit-1 allows me to change loop frequency without changing the ith number
