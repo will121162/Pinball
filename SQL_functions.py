@@ -29,12 +29,13 @@ columns = f'first_name, age, country_code, last_name, email, unique_str, is_admi
 def SQL_insert(rows,database,columns)->None:
 
     value_string = 'values ('
-    for items in rows: #adds placeholder per item in rows
+    column_split_list = columns.split()
+    for items in columns: #adds placeholder per item in columns
         value_string += '%s,'
     value_string = value_string[:-1] # removes final coma to maintain sql syntax
     value_string += ')'
     print(value_string,'\n===============================value string===================') # print for validation of value_string
-    mycursor.executemany(
+    mycursor.execute(
     f'insert into {database} ({columns}) ' #keeping dynamic for reuse, example below is static.
     f'{value_string}',
         rows,

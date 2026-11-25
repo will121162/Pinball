@@ -45,14 +45,14 @@ class Pin:
         self.points = points # number of points assigned to the pin (high scoring hard to get pins vs low scoring easy pins)
         self.time = time # date time of activation
 
-mario = Pin(state=False, points=0, num=1, time = None)
-peach = Pin(state=False, points=0, num=2,time = None)
-luigi = Pin(state=False, points=0, num=3,time = None)
-bowser = Pin(state=False, points=0, num=4,time = None)
-toad = Pin(state=False, points=0, num=5,time = None)
-toadette = Pin(state=False, points=0, num=6,time = None)
-yoshi = Pin(state=False, points=0, num=7,time = None)
-wario = Pin(state=False, points=0, num=8,time = None)
+mario = Pin(state=False, points=0, num=1, time=None)
+peach = Pin(state=False, points=0, num=2,time=None)
+luigi = Pin(state=False, points=0, num=3,time=None)
+bowser = Pin(state=False, points=0, num=4,time=None)
+toad = Pin(state=False, points=0, num=5,time=None)
+toadette = Pin(state=False, points=0, num=6,time=None)
+yoshi = Pin(state=False, points=0, num=7,time=None)
+wario = Pin(state=False, points=0, num=8,time=None)
 
 flipper_l = Pin(state=False,points=None,num=40, time=None) #it's a flipper, no points, events needed for logs
 flipper_r = Pin(state=False,points=None,num=50, time=None) #it's a flipper, no points, events needed for logs
@@ -62,26 +62,27 @@ pins = [mario, peach, luigi, bowser, toad, toadette, yoshi, wario, flipper_l, fl
 game_username = 'test_user'
 
 rows = []
-columns = f'pin_id , event_time'
+columns = f'pin_id , event_time , session_id'
 db_dict = {
     'db':db,
     'columns':columns,
     'rows':rows,
 }
 
-
-def send_uart(rows, columns, database):
+def send_uart(rows, columns, database): #uploads data from queue to sql (replicating UART message structure to ESP)
     SQL_insert(rows=rows,columns=columns,database=database)
 
-def initialise_sql(game_username):
+def initialise_sql(game_username): #generates and returns new session_id after uploading username to the session table
     SQL_insert(rows=game_username, columns='player_name',database='sessions')
+    session_id = mycursor.fetchone() # fetches last item via cursor (auto generated session_ID)
+    return session_id
 
 loop_unit = 100
 
-initialise_sql(game_username) # need to add ability to return session_id to then upload per row to SQL, session_id is saved per void loop (session)
+session_id = initialise_sql(game_username) # need to add ability to return session_id to then upload per row to SQL, session_id is saved per void loop (session)
 
 for i in range(loop_unit): #this is just a limited iterative loop to allow for cycling simulating the void loop in cpp
-    loop_time = datetime.time()
+    loop_time = datetime.utcnow()
     for pin in pins:
         if len(queue.stack) > 100: #not needed for python, needed for cpp MC integration, although it does catch possible queue pop failures
             raise Exception('runtime_stack exceeded 100 units')
@@ -93,8 +94,8 @@ for i in range(loop_unit): #this is just a limited iterative loop to allow for c
         if pin.state is True: #could simplify, left for clarity pin.state = true indicates a digital input on the pin thats defined
             pin.time = loop_time
             metrics_dict = {
-                'row':[pin.num,pin.time],
-                'columns':['pin_id, event_time']
+                'row':[pin.num,pin.time,session_id],
+                'columns':'pin_id, event_time, session_id'
             }
             queue.add(metrics_dict)#pin metrics are mutatable, need to take stamp of present values and append that, ie dict
             pin.state = False
