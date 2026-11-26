@@ -76,8 +76,8 @@ def send_uart(rows, columns)-> None | int: #uploads data from queue to sql (repl
 
 def initialise_sql(game_username,cursor)-> int | None: #generates and returns new session_id after uploading username to the session table
     #SQL_insert(rows=game_username, columns='player_name',database='sessions')
-    #session_id = cursor.fetchone() # fetches last item via cursor (auto generated session_ID) | this uses the cursor for SQL insert, need to defign new cursor for initialise
-    return dynamic_insert(rows=game_username, columns=columns, table_name='sessions', cursor = cursor, is_init = True)
+    #session_id = cursor.fetchone() # fetches last item via cursor (auto generated session_ID) | this uses the cursor for SQL insert, need to define new cursor for initialize
+    return dynamic_insert(rows=game_username, columns='player_name', table_name='sessions', cursor = cursor, is_init = True)
 
 loop_unit = 100
 
@@ -93,7 +93,7 @@ for i in range(loop_unit): #this is just a limited iterative loop to allow for c
         if random_int == 1:
             pin.state = True
 
-        if pin.state is True: #could simplify, left for clarity pin.state = true indicates a digital input on the pin thats defined
+        if pin.state:
             pin.time = loop_time
             metrics_dict = {
                 'row':[pin.num,pin.time,session_id],
@@ -110,5 +110,5 @@ for i in range(loop_unit): #this is just a limited iterative loop to allow for c
 
     if i == loop_unit-1: #pulls closing statistics to validate the loop works as expected. loop_unit-1 allows me to change loop frequency without changing the ith number
         for pin in pins:
-            print(f'pin {pin.num} points;{pin.points}\n')
+            print(f'pin {pin.num} points;{pin.points}')
         print(f'queue length:{len(queue.stack)}')

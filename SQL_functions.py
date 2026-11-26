@@ -79,6 +79,7 @@ def dynamic_insert(rows, columns, table_name, cursor, is_init:bool = False)-> in
 
     if is_init:
         return cursor.lastrowid
+    return None
 ''' 
 static example
 my_cursor.executemany(
