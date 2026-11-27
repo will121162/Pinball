@@ -1,36 +1,9 @@
-
-#key concepts are; there's a queue to hold data once it has been flagged as changed from initial state.
-#then the uart sender function takes the oldest item in the queue and sends it to the SQL server to save the game meta data
 from random import randint
 from SQL_functions import dynamic_insert, insert_cursor, init_cursor, insert_db, init_db
-import mysql.connector
-import os
 from datetime import datetime
 from dotenv import load_dotenv
 
 load_dotenv()
-
-'''
-insert_db = mysql.connector.connect(
-    host=os.environ['HOST'],
-    port=os.environ['PORT'],
-    user=os.environ['pinball_sqlun'],
-    password=os.environ["pinball_sqlpw"],
-    database=os.environ['DB'],
-)
-init_db = mysql.connector.connect(
-    host=os.environ['HOST'],
-    port=os.environ['PORT'],
-    user=os.environ['pinball_sqlun'],
-    password=os.environ["pinball_sqlpw"],
-    database=os.environ['DB'],
-)
-insert_cursor = insert_db.cursor()
-
-init_cursor = init_db.cursor()
-'''
-
-
 
 class Queue:
     def __init__(self,stack):
@@ -81,15 +54,12 @@ db_dict = {
 }
 
 def send_uart(rows, columns)-> None | int: #uploads data from queue to sql (replicating UART message structure to ESP)
-    #SQL_insert(rows=rows,columns=columns,database=database) #old static func.
     dynamic_insert(rows=rows, columns=columns, table_name='events', cursor = insert_cursor, is_init = False)
 
 def initialise_sql(game_username,cursor)-> int | None: #generates and returns new session_id after uploading username to the session table
-    #SQL_insert(rows=game_username, columns='player_name',database='sessions')
-    #session_id = cursor.fetchone() # fetches last item via cursor (auto generated session_ID) | this uses the cursor for SQL insert, need to define new cursor for initialize
-    return dynamic_insert(rows=game_username, columns='player_name', table_name='sessions', cursor = cursor, is_init = True)
+   return dynamic_insert(rows=game_username, columns='player_name', table_name='sessions', cursor = cursor, is_init = True)
 
-loop_unit = 100
+loop_unit = 1000
 
 session_id = initialise_sql(game_username, init_cursor) # need to add ability to return session_id to then upload per row to SQL, session_id is saved per void loop (session)
 
