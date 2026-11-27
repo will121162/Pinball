@@ -4,18 +4,26 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-database = os.environ['DB']
 
-db = mysql.connector.connect(
+insert_db = mysql.connector.connect(
     host=os.environ['HOST'],
     port=os.environ['PORT'],
     user=os.environ['pinball_sqlun'],
     password=os.environ["pinball_sqlpw"],
-    database=database,
+    database=os.environ['DB'],
 )
-insert_cursor = db.cursor()
+init_db = mysql.connector.connect(
+    host=os.environ['HOST'],
+    port=os.environ['PORT'],
+    user=os.environ['pinball_sqlun'],
+    password=os.environ["pinball_sqlpw"],
+    database=os.environ['DB'],
+)
+insert_cursor = insert_db.cursor()
 
-initialise_cursor = db.cursor()
+init_cursor = init_db.cursor()
+
+
 rows = []
 '''
 
@@ -74,11 +82,15 @@ def dynamic_insert(rows, columns, table_name, cursor, is_init:bool = False)-> in
         f'{value_string}',
         rows,
     )
-
-    db.commit()
-
+    #db.commit()
     if is_init:
-        return cursor.lastrowid
+        init_db.commit()
+        session_id = cursor.lastrowid
+        print(session_id,'============================session_id======================')
+        return session_id
+    else:
+        insert_db.commit()
+    #print(cursor._connection is init_db, cursor._connection is insert_db,'+++++++++++++++++++++++++++++++++++')
     return None
 ''' 
 static example

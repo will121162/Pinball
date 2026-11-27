@@ -2,7 +2,7 @@
 #key concepts are; there's a queue to hold data once it has been flagged as changed from initial state.
 #then the uart sender function takes the oldest item in the queue and sends it to the SQL server to save the game meta data
 from random import randint
-from SQL_functions import SQL_insert, dynamic_insert
+from SQL_functions import dynamic_insert, insert_cursor, init_cursor, insert_db, init_db
 import mysql.connector
 import os
 from datetime import datetime
@@ -10,17 +10,27 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-
-db = mysql.connector.connect( # handels server connection, table specific CRUD is handled by specific calls.
+'''
+insert_db = mysql.connector.connect(
     host=os.environ['HOST'],
     port=os.environ['PORT'],
     user=os.environ['pinball_sqlun'],
     password=os.environ["pinball_sqlpw"],
     database=os.environ['DB'],
 )
+init_db = mysql.connector.connect(
+    host=os.environ['HOST'],
+    port=os.environ['PORT'],
+    user=os.environ['pinball_sqlun'],
+    password=os.environ["pinball_sqlpw"],
+    database=os.environ['DB'],
+)
+insert_cursor = insert_db.cursor()
 
-initialise_cursor = db.cursor()
-insert_cursor = db.cursor()
+init_cursor = init_db.cursor()
+'''
+
+
 
 class Queue:
     def __init__(self,stack):
@@ -65,7 +75,7 @@ game_username = ['test_user']
 rows = []
 columns = f'pin_id , event_time , session_id'
 db_dict = {
-    'db':db,
+    'db':insert_db,
     'columns':columns,
     'rows':rows,
 }
@@ -81,7 +91,7 @@ def initialise_sql(game_username,cursor)-> int | None: #generates and returns ne
 
 loop_unit = 100
 
-session_id = initialise_sql(game_username, initialise_cursor) # need to add ability to return session_id to then upload per row to SQL, session_id is saved per void loop (session)
+session_id = initialise_sql(game_username, init_cursor) # need to add ability to return session_id to then upload per row to SQL, session_id is saved per void loop (session)
 
 for i in range(loop_unit): #this is just a limited iterative loop to allow for cycling simulating the void loop in cpp
     loop_time = datetime.now()
@@ -110,5 +120,5 @@ for i in range(loop_unit): #this is just a limited iterative loop to allow for c
 
     if i == loop_unit-1: #pulls closing statistics to validate the loop works as expected. loop_unit-1 allows me to change loop frequency without changing the ith number
         for pin in pins:
-            print(f'pin {pin.num} points;{pin.points}')
+            print(f'pin {pin.num} points:{pin.points}')
         print(f'queue length:{len(queue.stack)}')
